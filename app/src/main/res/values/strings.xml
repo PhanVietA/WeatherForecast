@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">WeatherForeCastApp</string>
+    <string name="first_title">Weather</string>
+    <string name="second_title">ForeCasts</string>
+    <string name="btn_get_start">Get Start</string>
+    <string name="weather_icon"></string>
 </resources>
