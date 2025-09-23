@@ -53,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/first_title"
                 android:textSize="56sp"
-                android:textColor="@android:color/white"
+                android:textColor="@color/white"
                 android:fontFamily="@font/poppins_bold"
                 android:letterSpacing="-0.01"
                 android:gravity="center" />
@@ -65,7 +65,7 @@
                 android:layout_marginTop="4dp"
                 android:text="@string/second_title"
                 android:textSize="56sp"
-                android:textColor="#DDB130"
+                android:textColor="@color/yellow_color"
                 android:fontFamily="@font/poppins_medium"
                 android:letterSpacing="-0.01"
                 android:gravity="center" />
@@ -79,7 +79,7 @@
         android:layout_marginTop="48dp"
         app:cardCornerRadius="60dp"
         app:cardElevation="0dp"
-        app:cardBackgroundColor="@android:color/transparent"
+        app:cardBackgroundColor="@color/transparent"
         app:layout_constraintTop_toBottomOf="@id/cardTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -90,10 +90,10 @@
             android:layout_height="60dp"
             android:text="@string/btn_get_start"
             android:textAllCaps="false"
-            android:textColor="#4A148C"
+            android:textColor="@color/text_btn"
             android:textSize="20sp"
             app:cornerRadius="30dp"
-            app:backgroundTint="#DDB130"/>
+            app:backgroundTint="@color/yellow_color"/>
 
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
