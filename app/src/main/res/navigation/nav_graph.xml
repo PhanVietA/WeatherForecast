@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/splashFragmentA1"
-        android:name="com.example.weatherforecastapp.SplashFragmentA1"
+        android:name="com.example.weatherforecastapp.SplashFragment"
         android:label="Splash A1">
     </fragment>
 

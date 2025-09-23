@@ -8,9 +8,9 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardWeatherIcon"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="40dp"
         app:cardCornerRadius="24dp"
         app:cardElevation="0dp"
         app:cardBackgroundColor="@android:color/transparent"
@@ -19,8 +19,9 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <ImageView
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:scaleType="centerInside"
             android:src="@mipmap/ic_weather"
             android:contentDescription="@string/weather_icon"
             android:padding="16dp"/>
@@ -30,7 +31,7 @@
         android:id="@+id/cardTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="24dp"
         app:cardCornerRadius="0dp"
         app:cardElevation="0dp"
         app:cardBackgroundColor="@android:color/transparent"
@@ -43,7 +44,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center"
-            android:paddingHorizontal="32dp"
+            android:paddingHorizontal="16dp"
             android:paddingVertical="8dp">
 
             <TextView
@@ -51,7 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/first_title"
-                android:textSize="48sp"
+                android:textSize="56sp"
                 android:textColor="@android:color/white"
                 android:fontFamily="@font/poppins_bold"
                 android:letterSpacing="-0.01"
@@ -61,9 +62,9 @@
                 android:id="@+id/txtForecasts"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="4dp"
                 android:text="@string/second_title"
-                android:textSize="48sp"
+                android:textSize="56sp"
                 android:textColor="#DDB130"
                 android:fontFamily="@font/poppins_medium"
                 android:letterSpacing="-0.01"
@@ -76,22 +77,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="48dp"
-        app:cardCornerRadius="50dp"
+        app:cardCornerRadius="60dp"
         app:cardElevation="0dp"
         app:cardBackgroundColor="@android:color/transparent"
         app:layout_constraintTop_toBottomOf="@id/cardTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnGetStarted"
-            android:layout_width="200dp"
-            android:layout_height="wrap_content"
+            android:layout_width="260dp"
+            android:layout_height="60dp"
             android:text="@string/btn_get_start"
             android:textAllCaps="false"
             android:textColor="#4A148C"
-            android:textSize="18sp"
-            android:backgroundTint="#DDB130"/>
-    </androidx.cardview.widget.CardView>
+            android:textSize="20sp"
+            app:cornerRadius="30dp"
+            app:backgroundTint="#DDB130"/>
 
+    </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
