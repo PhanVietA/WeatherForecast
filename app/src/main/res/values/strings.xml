@@ -1,4 +1,5 @@
 <resources>
+
     <string name="app_name">WeatherForeCastApp</string>
     <string name="first_title">Weather</string>
     <string name="second_title">ForeCasts</string>
@@ -6,4 +7,24 @@
     <string name="description">Precipitations</string>
     <string name="max_min">Max: 24°\u00A0\u00A0\u00A0Min: 18°</string>
     <string name="temperature">19°</string>
+    <string name="today">Today</string>
+    <string name="date_month">July, 21</string>
+    <string name="temperature_1">19°C</string>
+    <string name="temperature_2">18°C</string>
+    <string name="temperature_3">20°C</string>
+    <string name="temperature_4">21°C</string>
+    <string name="time_1">15:00</string>
+    <string name="time_2">16:00</string>
+    <string name="time_3">17:00</string>
+    <string name="time_4">18:00</string>
+    <string name="cd_main_weather_icon">Main weather icon</string>
+    <string name="cd_house_image">House background image</string>
+    <string name="cd_forecast_icon_1">Forecast weather icon at 15:00</string>
+    <string name="cd_forecast_icon_2">Forecast weather icon at 16:00</string>M
+    <string name="cd_forecast_icon_3">Forecast weather icon at 17:00</string>
+    <string name="cd_forecast_icon_4">Forecast weather icon at 18:00</string>
+    <string name="cd_location_button">Location button</string>
+    <string name="cd_add_button">Add location button</string>
+    <string name="cd_menu_button">Menu button</string>
+    <string name="weather_icon">Main weather icon</string>
 </resources>
