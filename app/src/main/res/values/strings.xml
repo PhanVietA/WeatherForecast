@@ -6,4 +6,18 @@
     <string name="description">Precipitations</string>
     <string name="max_min">Max: 24°\u00A0\u00A0\u00A0Min: 18°</string>
     <string name="temperature">19°</string>
-</resources>
+    <string name="weather_icon">Weather icon</string>
+    <string name="today">Today</string>
+    <string name="date_month">July, 21</string>
+    <string name="forecast_temp_19">19°C</string>
+    <string name="forecast_time_15_00">15:00</string>
+    <string name="icon_location_desc">Location icon</string>
+    <string name="icon_plus_desc">Add location</string>
+    <string name="icon_menu_desc">Menu icon</string>
+    <string name="time_1">15.00</string>
+    <string name="time_2">16.00</string>
+    <string name="time_3">17.00</string>
+    <string name="time_4">18.00</string>
+    <string name="temperature_1">19°C</string>
+    <string name="temperature_2">18°C</string>
+    </resources>

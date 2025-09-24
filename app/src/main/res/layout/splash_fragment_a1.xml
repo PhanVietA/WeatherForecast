@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="250dp"
             android:scaleType="centerInside"
-            android:src="@mipmap/ic_weather"
+            android:src="@mipmap/ic_weather1"
             android:contentDescription="@string/weather_icon"
             android:padding="16dp"/>
     </androidx.cardview.widget.CardView>
