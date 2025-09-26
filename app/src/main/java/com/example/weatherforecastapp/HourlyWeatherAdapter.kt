@@ -1,4 +1,4 @@
-package com.example.weatherforecast
+package com.example.weatherforecastapp
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,8 +6,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.weatherforecast.model.HourlyWeather
-import com.example.weatherforecastapp.R
 
 class HourlyWeatherAdapter(
     private val items: List<HourlyWeather>

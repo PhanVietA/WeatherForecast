@@ -9,14 +9,8 @@
     <string name="temperature">19°</string>
     <string name="today">Today</string>
     <string name="date_month">July, 21</string>
-    <string name="temperature_1">19°C</string>
-    <string name="temperature_2">18°C</string>
-    <string name="temperature_3">20°C</string>
-    <string name="temperature_4">21°C</string>
-    <string name="time_1">15:00</string>
-    <string name="time_2">16:00</string>
-    <string name="time_3">17:00</string>
-    <string name="time_4">18:00</string>
+    <string name="text_Temp">19°C</string>
+    <string name="text_hour">15:00</string>
     <string name="cd_main_weather_icon">Main weather icon</string>
     <string name="cd_house_image">House background image</string>
     <string name="cd_forecast_icon_1">Forecast weather icon at 15:00</string>
