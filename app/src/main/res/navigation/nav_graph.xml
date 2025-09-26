@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nav_graph"
-    app:startDestination="@id/splashFragmentA1">
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/splashFragment">
 
     <fragment
-        android:id="@+id/splashFragmentA1"
+        android:id="@+id/splashFragment"
         android:name="com.example.weatherforecastapp.SplashFragment"
-        android:label="Splash A1">
+        android:label="Splash"
+        tools:layout="@layout/splash_fragment_a1">
+        <action
+            android:id="@+id/action_splashFragment_to_a2Fragment"
+            app:destination="@id/a2Fragment" />
     </fragment>
 
+    <fragment
+        android:id="@+id/a2Fragment"
+        android:name="com.example.weatherforecastapp.A2Fragment"
+        android:label="A2"
+        tools:layout="@layout/fragment_a2" />
 </navigation>
