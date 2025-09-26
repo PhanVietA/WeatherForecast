@@ -2,21 +2,41 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
     app:startDestination="@id/splashFragment">
 
     <fragment
         android:id="@+id/splashFragment"
         android:name="com.example.weatherforecastapp.SplashFragment"
-        android:label="Splash"
+        android:label="SplashFragment"
         tools:layout="@layout/splash_fragment_a1">
+
         <action
             android:id="@+id/action_splashFragment_to_a2Fragment"
             app:destination="@id/a2Fragment" />
+
     </fragment>
 
     <fragment
         android:id="@+id/a2Fragment"
         android:name="com.example.weatherforecastapp.A2Fragment"
-        android:label="A2"
-        tools:layout="@layout/fragment_a2" />
+        android:label="A2Fragment"
+        tools:layout="@layout/fragment_a2">
+
+        <action
+            android:id="@+id/action_a2Fragment_to_splashFragment"
+            app:destination="@id/splashFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
+
+        <action
+            android:id="@+id/action_a2Fragment_to_a3Fragment"
+            app:destination="@id/a3Fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/a3Fragment"
+        android:name="com.example.weatherforecastapp.A3Fragment"
+        android:label="A3Fragment"
+        tools:layout="@layout/fragment_a3" />
 </navigation>
