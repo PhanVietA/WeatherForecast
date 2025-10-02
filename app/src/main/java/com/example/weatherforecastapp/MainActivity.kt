@@ -9,14 +9,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Lấy NavController, không cần setupActionBar vì đã bỏ Toolbar
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
 
-        // Nếu muốn lắng nghe chuyển destination, có thể thêm code ở đây
         navController.addOnDestinationChangedListener { _, _, _ ->
-            // Xử lý khi điều hướng, nếu cần
         }
     }
 

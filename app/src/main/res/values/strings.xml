@@ -7,7 +7,7 @@
     <string name="description">Precipitations</string>
     <string name="max_min">Max: 24°\u00A0\u00A0\u00A0Min: 18°</string>
     <string name="temperature">19°</string>
-<<<<<<< HEAD
+
     <string name="today">Today</string>
     <string name="date_month">July, 21</string>
     <string name="text_Temp">19°C</string>
@@ -15,18 +15,14 @@
     <string name="cd_main_weather_icon">Main weather icon</string>
     <string name="cd_house_image">House background image</string>
     <string name="cd_forecast_icon_1">Forecast weather icon at 15:00</string>
-    <string name="cd_forecast_icon_2">Forecast weather icon at 16:00</string>M
+    <string name="cd_forecast_icon_2">Forecast weather icon at 16:00</string>
     <string name="cd_forecast_icon_3">Forecast weather icon at 17:00</string>
     <string name="cd_forecast_icon_4">Forecast weather icon at 18:00</string>
     <string name="cd_location_button">Location button</string>
     <string name="cd_add_button">Add location button</string>
     <string name="cd_menu_button">Menu button</string>
     <string name="weather_icon">Main weather icon</string>
-</resources>
-=======
-    <string name="weather_icon">Weather icon</string>
-    <string name="today">Today</string>
-    <string name="date_month">July, 21</string>
+
     <string name="forecast_temp_19">19°C</string>
     <string name="forecast_time_15_00">15:00</string>
     <string name="icon_location_desc">Location icon</string>
@@ -38,5 +34,5 @@
     <string name="time_4">18.00</string>
     <string name="temperature_1">19°C</string>
     <string name="temperature_2">18°C</string>
-    </resources>
->>>>>>> 28e134d2c7aa20d2bccc9b21f9253795db216b85
+
+</resources>
