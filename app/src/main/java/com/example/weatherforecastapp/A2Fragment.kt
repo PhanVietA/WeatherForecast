@@ -13,6 +13,9 @@ import com.bumptech.glide.Glide
 import com.example.weatherforecastapp.databinding.FragmentA2Binding
 import com.example.weatherforecastapp.viewmodel.WeatherViewModel
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class A2Fragment : Fragment() {
 
@@ -32,6 +35,9 @@ class A2Fragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val currentDate = SimpleDateFormat("MMMM, dd", Locale.getDefault()).format(Date())
+        binding.dateText.text = currentDate
 
         val adapter = HourlyWeatherAdapter(emptyList())
         binding.hourlyRecyclerView.adapter = adapter
