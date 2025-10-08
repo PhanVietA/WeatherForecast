@@ -1,14 +1,16 @@
 package com.example.weatherforecastapp
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 
 class HourlyWeatherAdapter(
-    private val items: List<HourlyWeather>
+    private var items: List<HourlyWeather>
 ) : RecyclerView.Adapter<HourlyWeatherAdapter.HourlyViewHolder>() {
 
     inner class HourlyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -27,8 +29,17 @@ class HourlyWeatherAdapter(
         val item = items[position]
         holder.textHour.text = item.hour
         holder.textTemp.text = item.temperature
-        holder.iconWeather.setImageResource(item.iconRes)
+
+        Glide.with(holder.itemView.context)
+            .load(item.iconUrl)
+            .into(holder.iconWeather)
     }
 
     override fun getItemCount(): Int = items.size
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateData(newItems: List<HourlyWeather>) {
+        items = newItems
+        notifyDataSetChanged()
+    }
 }
