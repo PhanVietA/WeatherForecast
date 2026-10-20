@@ -36,4 +36,20 @@
     <string name="temperature_2">18°C</string>
     <string name="temp_format">%1$.0f°C</string>
     <string name="max_min_format">Max: %1$.0f°C / Min: %2$.0f°C</string>
+
+    <string name="location_and_temp">North America\nMax: 24° Min: 18°</string>
+    <string name="days_title">7-Days Forecasts</string>
+    <string name="air_quality">AIR QUALITY</string>
+    <string name="see_more">See more</string>
+
+    <string name="aqi_level_1">1 - Low Health Risk (Good)</string>
+    <string name="aqi_level_2">2 - Moderate Health Risk</string>
+    <string name="aqi_level_3">3 - Low/Moderate Health Risk</string>
+    <string name="aqi_level_4">4 - High Health Risk</string>
+    <string name="aqi_level_5">5 - Very High Health Risk</string>
+
+    <string name="sunrise_title">🌅 SUNRISE</string>
+    <string name="sunset_prefix">Sunset: %s</string>
+    <string name="uv_title">🌞 UV INDEX</string>
+    <string name="uv_moderate">Moderate</string>
 </resources>
