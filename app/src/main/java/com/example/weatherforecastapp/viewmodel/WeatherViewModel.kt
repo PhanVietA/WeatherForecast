@@ -16,6 +16,7 @@ import java.util.Locale
 data class WeatherUiState(
     val currentWeather: WeatherResponse? = null,
     val hourlyForecast: List<HourlyWeather> = emptyList(),
+    val fullForecastList: List<Any> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null
 )
@@ -90,6 +91,7 @@ class WeatherViewModel : ViewModel() {
                 _uiState.value = WeatherUiState(
                     currentWeather = current,
                     hourlyForecast = hourlyList,
+                    fullForecastList = forecast.list,
                     isLoading = false
                 )
 

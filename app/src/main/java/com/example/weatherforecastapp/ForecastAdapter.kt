@@ -9,8 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherforecastapp.R
 import com.example.weatherforecastapp.model.Forecast
 
-class ForecastAdapter(private val items: List<Forecast>) :
-    RecyclerView.Adapter<ForecastAdapter.ForecastViewHolder>() {
+class ForecastAdapter(
+    private val items: List<Forecast> = emptyList()
+) : RecyclerView.Adapter<ForecastAdapter.ForecastViewHolder>() {
 
     inner class ForecastViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imgWeatherIcon: ImageView = itemView.findViewById(R.id.imgWeatherIcon)

@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherforecastapp.model.HourlyWeather
 
 class HourlyWeatherAdapter(
-    private var items: List<HourlyWeather>
+    private var items: List<HourlyWeather> = emptyList()
 ) : RecyclerView.Adapter<HourlyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HourlyViewHolder {
