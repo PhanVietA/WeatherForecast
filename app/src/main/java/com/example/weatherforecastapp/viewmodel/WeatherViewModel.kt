@@ -3,6 +3,7 @@ package com.example.weatherforecastapp.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.weatherforecastapp.model.ForecastItem
 import com.example.weatherforecastapp.model.HourlyWeather
 import com.example.weatherforecastapp.model.WeatherResponse
 import com.example.weatherforecastapp.repository.WeatherRepository
@@ -16,7 +17,8 @@ import java.util.Locale
 data class WeatherUiState(
     val currentWeather: WeatherResponse? = null,
     val hourlyForecast: List<HourlyWeather> = emptyList(),
-    val fullForecastList: List<Any> = emptyList(),
+    val fullForecastList: List<ForecastItem> = emptyList(),
+    val airQuality: Int? = null, // Thêm trường lưu AQI cho màn A3
     val isLoading: Boolean = false,
     val error: String? = null
 )
@@ -32,42 +34,34 @@ class WeatherViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 Log.d("WeatherAPI", "Bắt đầu gọi API thời tiết")
-                Log.d("WeatherAPI", "Latitude: $lat")
-                Log.d("WeatherAPI", "Longitude: $lon")
 
                 _uiState.value = _uiState.value.copy(
                     isLoading = true,
                     error = null
                 )
 
-                Log.d("WeatherAPI", "Đang gọi Current Weather API")
+                // 1. Gọi Current Weather API
+                val current = repository.getCurrentWeather(lat, lon, apiKey)
+                Log.d("WeatherAPI", "Current Weather thành công: ${current.main.temp}")
 
-                val current = repository.getCurrentWeather(
-                    lat,
-                    lon,
-                    apiKey
-                )
+                // 2. Gọi Forecast API
+                val forecast = repository.getHourlyForecast(lat, lon, apiKey)
+                Log.d("WeatherAPI", "Forecast thành công: số lượng ${forecast.list.size}")
 
-                Log.d("WeatherAPI", "Current Weather API thành công")
-                Log.d("WeatherAPI", "Nhiệt độ hiện tại: ${current.main.temp}")
+                // 3. Gọi Air Quality API (Phục vụ card Air Quality ở màn A3)
+                var aqiValue: Int? = null
+                try {
+                    val airQualityResponse = repository.getAirQuality(lat, lon, apiKey)
+                    aqiValue = airQualityResponse.list.firstOrNull()?.main?.aqi
+                    Log.d("WeatherAPI", "Air Quality thành công: AQI = $aqiValue")
+                } catch (e: Exception) {
+                    Log.e("WeatherAPI", "Gọi Air Quality thất bại: ${e.message}")
+                }
 
-                Log.d("WeatherAPI", "Đang gọi Forecast API")
-
-                val forecast = repository.getHourlyForecast(
-                    lat,
-                    lon,
-                    apiKey
-                )
-
-                Log.d("WeatherAPI", "Forecast API thành công")
-                Log.d("WeatherAPI", "Số lượng dữ liệu forecast: ${forecast.list.size}")
-
-                val sdf = SimpleDateFormat(
-                    "HH:mm",
-                    Locale.getDefault()
-                )
-
+                // Format danh sách thời tiết theo giờ cho RecyclerView
+                val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
                 val hourlyList = forecast.list.take(6).map { item ->
+                    // Đã sửa lỗi thiếu dấu * ở đây
                     val date = Date(item.dt * 1000L)
                     val time = sdf.format(date)
 
@@ -76,9 +70,7 @@ class WeatherViewModel : ViewModel() {
                         ?.icon
                         ?: "01d"
 
-                    val iconUrl =
-                        "https://openweathermap.org/img/wn/${iconCode}@2x.png"
-
+                    val iconUrl = "https://openweathermap.org/img/wn/${iconCode}@2x.png"
                     val temp = item.main.temp.toInt()
 
                     HourlyWeather(
@@ -88,22 +80,19 @@ class WeatherViewModel : ViewModel() {
                     )
                 }
 
+                // Cập nhật toàn bộ State
                 _uiState.value = WeatherUiState(
                     currentWeather = current,
                     hourlyForecast = hourlyList,
                     fullForecastList = forecast.list,
+                    airQuality = aqiValue,
                     isLoading = false
                 )
 
-                Log.d("WeatherAPI", "Đã cập nhật dữ liệu lên UI")
+                Log.d("WeatherAPI", "Đã cập nhật dữ liệu lên UI thành công")
 
             } catch (e: Exception) {
-
-                Log.e(
-                    "WeatherAPI",
-                    "Gọi API thất bại: ${e.message}",
-                    e
-                )
+                Log.e("WeatherAPI", "Gọi API thất bại: ${e.message}", e)
 
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,

@@ -64,6 +64,6 @@ android {
         implementation(libs.kotlinx.coroutines.android)
         implementation(libs.glide)
         kapt(libs.glide.compiler)
-        implementation("com.google.android.gms:play-services-location:21.4.0")
+        implementation("com.google.android.gms:play-services-location:21.0.1")
     }
 }

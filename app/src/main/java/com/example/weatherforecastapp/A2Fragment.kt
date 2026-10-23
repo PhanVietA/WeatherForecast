@@ -1,11 +1,13 @@
 package com.example.weatherforecastapp
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +24,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.weatherforecastapp.databinding.FragmentA2Binding
 import com.example.weatherforecastapp.viewmodel.WeatherViewModel
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class A2Fragment : Fragment() {
 
@@ -33,17 +42,21 @@ class A2Fragment : Fragment() {
 
     private val apiKey = "7da87b1af74bf26f43862eca5b171b1b"
     private lateinit var hourlyAdapter: HourlyWeatherAdapter
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
 
     private val locationPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
-        ) {
-            if (hasLocationPermission()) {
+        ) { permissions ->
+            val granted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+                    permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+
+            if (granted) {
                 loadWeatherFromLocation()
             } else {
                 Toast.makeText(
                     requireContext(),
-                    "Location permission denied. Showing default location.",
+                    "Quyền vị trí bị từ chối. Hiển thị vị trí mặc định.",
                     Toast.LENGTH_SHORT
                 ).show()
                 loadDefaultLocation()
@@ -62,20 +75,13 @@ class A2Fragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+
         setupRecyclerView()
         observeWeatherState()
         setupClickListeners()
 
-        if (hasLocationPermission()) {
-            loadWeatherFromLocation()
-        } else {
-            locationPermissionLauncher.launch(
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                )
-            )
-        }
+        checkPermissionAndLoadLocation()
     }
 
     private fun setupRecyclerView() {
@@ -89,6 +95,23 @@ class A2Fragment : Fragment() {
     private fun setupClickListeners() {
         binding.weatherForecastCard.setOnClickListener {
             findNavController().navigate(R.id.action_a2Fragment_to_a3Fragment)
+        }
+        binding.btnLocation.setOnClickListener {
+            Toast.makeText(requireContext(), "Đang cập nhật vị trí...", Toast.LENGTH_SHORT).show()
+            checkPermissionAndLoadLocation()
+        }
+    }
+
+    private fun checkPermissionAndLoadLocation() {
+        if (hasLocationPermission()) {
+            loadWeatherFromLocation()
+        } else {
+            locationPermissionLauncher.launch(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
+            )
         }
     }
 
@@ -108,12 +131,47 @@ class A2Fragment : Fragment() {
         return fineLocationGranted || coarseLocationGranted
     }
 
+    @SuppressLint("MissingPermission")
     private fun loadWeatherFromLocation() {
         if (!hasLocationPermission()) {
             loadDefaultLocation()
             return
         }
 
+        fusedLocationClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    Log.d("WeatherLocation", "Lấy lastLocation thành công: Lat=${location.latitude}, Lon=${location.longitude}")
+                    viewModel.loadWeather(location.latitude, location.longitude, apiKey)
+                } else {
+                    requestFreshLocation()
+                }
+            }
+            .addOnFailureListener {
+                requestFreshLocation()
+            }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun requestFreshLocation() {
+        val cancellationTokenSource = CancellationTokenSource()
+        fusedLocationClient.getCurrentLocation(
+            Priority.PRIORITY_HIGH_ACCURACY,
+            cancellationTokenSource.token
+        ).addOnSuccessListener { location: Location? ->
+            if (location != null) {
+                Log.d("WeatherLocation", "Lấy currentLocation mới thành công: Lat=${location.latitude}, Lon=${location.longitude}")
+                viewModel.loadWeather(location.latitude, location.longitude, apiKey)
+            } else {
+                fallbackToLocationManager()
+            }
+        }.addOnFailureListener {
+            fallbackToLocationManager()
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun fallbackToLocationManager() {
         try {
             val locationManager =
                 requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -135,18 +193,23 @@ class A2Fragment : Fragment() {
                 .maxByOrNull { it.time }
 
             if (location != null) {
+                Log.d("WeatherLocation", "Lấy LocationManager thành công: Lat=${location.latitude}, Lon=${location.longitude}")
                 viewModel.loadWeather(location.latitude, location.longitude, apiKey)
             } else {
+                Toast.makeText(
+                    requireContext(),
+                    "Không thể xác định vị trí. Hiển thị vị trí mặc định (Hà Nội).",
+                    Toast.LENGTH_SHORT
+                ).show()
                 loadDefaultLocation()
             }
-
-        } catch (_: SecurityException) {
+        } catch (_: Exception) {
             loadDefaultLocation()
         }
     }
 
     private fun loadDefaultLocation() {
-        // Vị trí mặc định (Ví dụ: Hà Nội)
+        // Vị trí mặc định (Hà Nội)
         viewModel.loadWeather(21.0285, 105.8542, apiKey)
     }
 
@@ -162,8 +225,15 @@ class A2Fragment : Fragment() {
                         }
                     }
 
+                    // Cập nhật ngày tháng thực tế cho phần Today (Ví dụ: "24 tháng 02")
+                    val currentDateStr = SimpleDateFormat("dd 'tháng' MM", Locale.forLanguageTag("vi-VN")).format(Date())
+                    binding.dateText.text = currentDateStr
+
                     // Cập nhật dữ liệu thời tiết hiện tại lên UI màn A2
                     state.currentWeather?.let { weather ->
+                        val cityName = weather.name ?: "--"
+                        binding.tvCityName.text = cityName
+
                         binding.currentTemp.text = getString(R.string.temp_format, weather.main.temp)
                         binding.description.text = weather.weather.firstOrNull()?.description ?: "--"
                         binding.maxMin.text = getString(
@@ -171,9 +241,6 @@ class A2Fragment : Fragment() {
                             weather.main.tempMax,
                             weather.main.tempMin
                         )
-
-                        // Nếu bạn muốn hiển thị cả tên thành phố ở A2, có thể gán vào đây:
-                        // binding.tvCityName?.text = weather.name
 
                         val iconCode = weather.weather.firstOrNull()?.icon
                         val iconUrl = "https://openweathermap.org/img/wn/${iconCode}@2x.png"
