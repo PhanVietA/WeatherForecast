@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.weatherforecastapp.model.Forecast
 
 class ForecastAdapter(
@@ -27,17 +26,9 @@ class ForecastAdapter(
 
     override fun onBindViewHolder(holder: ForecastViewHolder, position: Int) {
         val item = items[position]
+        holder.imgWeatherIcon.setImageResource(item.iconResId)
         holder.tvHour.text = item.time
         holder.tvTemp.text = item.temperature
-
-        if (!item.iconUrl.isNullOrEmpty()) {
-            Glide.with(holder.itemView.context)
-                .load(item.iconUrl)
-                .placeholder(item.iconResId)
-                .into(holder.imgWeatherIcon)
-        } else {
-            holder.imgWeatherIcon.setImageResource(item.iconResId)
-        }
     }
 
     override fun getItemCount(): Int = items.size

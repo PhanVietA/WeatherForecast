@@ -40,7 +40,7 @@ class A2Fragment : Fragment() {
 
     private val viewModel: WeatherViewModel by activityViewModels()
 
-    private val apiKey = "7da87b1af74bf26f43862eca5b171b1b"
+    private val apiKey = "2863621e04b2f2761eab71d2a45ec4f0"
     private lateinit var hourlyAdapter: HourlyWeatherAdapter
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
