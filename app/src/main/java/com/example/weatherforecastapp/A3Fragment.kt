@@ -118,9 +118,23 @@ class A3Fragment : Fragment(R.layout.fragment_a3) {
                         binding.tvAirQualityDetails.text = getString(aqiStringId)
                     }
 
-                    // 4. Cập nhật chỉ số UV
-                    binding.tvUvValue.text = "4"
-                    binding.tvUvLevel.text = getString(R.string.uv_moderate)
+                    // 4. Cập nhật chỉ số UV thực tế từ API
+                    state.uvIndex?.let { uv ->
+                        binding.tvUvValue.text = if (uv % 1.0 == 0.0) {
+                            uv.toInt().toString()
+                        } else {
+                            String.format(Locale.getDefault(), "%.1f", uv)
+                        }
+
+                        val uvLevelResId = when {
+                            uv < 3.0 -> R.string.uv_low
+                            uv < 6.0 -> R.string.uv_moderate
+                            uv < 8.0 -> R.string.uv_high
+                            uv < 11.0 -> R.string.uv_very_high
+                            else -> R.string.uv_extreme
+                        }
+                        binding.tvUvLevel.text = getString(uvLevelResId)
+                    }
                 }
             }
         }

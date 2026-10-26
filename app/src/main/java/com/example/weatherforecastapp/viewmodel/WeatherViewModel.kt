@@ -19,6 +19,7 @@ data class WeatherUiState(
     val hourlyForecast: List<HourlyWeather> = emptyList(),
     val fullForecastList: List<ForecastItem> = emptyList(),
     val airQuality: Int? = null, // Thêm trường lưu AQI cho màn A3
+    val uvIndex: Double? = null, // Thêm trường lưu UV Index cho màn A3
     val isLoading: Boolean = false,
     val error: String? = null
 )
@@ -58,6 +59,16 @@ class WeatherViewModel : ViewModel() {
                     Log.e("WeatherAPI", "Gọi Air Quality thất bại: ${e.message}")
                 }
 
+                // 4. Gọi UV Index API (Phục vụ card UV Index ở màn A3)
+                var uvValue: Double? = null
+                try {
+                    val uvResponse = repository.getUvIndex(lat, lon, apiKey)
+                    uvValue = uvResponse.value
+                    Log.d("WeatherAPI", "UV Index thành công: UV = $uvValue")
+                } catch (e: Exception) {
+                    Log.e("WeatherAPI", "Gọi UV Index thất bại: ${e.message}")
+                }
+
                 // Format danh sách thời tiết theo giờ cho RecyclerView
                 val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
                 val hourlyList = forecast.list.take(6).map { item ->
@@ -86,6 +97,7 @@ class WeatherViewModel : ViewModel() {
                     hourlyForecast = hourlyList,
                     fullForecastList = forecast.list,
                     airQuality = aqiValue,
+                    uvIndex = uvValue,
                     isLoading = false
                 )
 

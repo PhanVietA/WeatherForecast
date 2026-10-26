@@ -16,4 +16,7 @@ class WeatherRepository {
     suspend fun getAirQuality(lat: Double, lon: Double, apiKey: String): AirQualityResponse {
         return RetrofitInstance.api.getAirQuality(lat, lon, apiKey)
     }
+
+    suspend fun getUvIndex(lat: Double, lon: Double, apiKey: String) =
+        RetrofitInstance.api.getUvIndex(lat, lon, apiKey)
 }

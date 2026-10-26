@@ -225,8 +225,8 @@ class A2Fragment : Fragment() {
                         }
                     }
 
-                    // Cập nhật ngày tháng thực tế cho phần Today (Ví dụ: "24 tháng 02")
-                    val currentDateStr = SimpleDateFormat("dd 'tháng' MM", Locale.forLanguageTag("vi-VN")).format(Date())
+                    // Cập nhật ngày tháng thực tế cho phần Today (Ví dụ: "July, 25")
+                    val currentDateStr = SimpleDateFormat("MMMM, d", Locale.ENGLISH).format(Date())
                     binding.dateText.text = currentDateStr
 
                     // Cập nhật dữ liệu thời tiết hiện tại lên UI màn A2
