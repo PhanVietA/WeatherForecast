@@ -3,7 +3,6 @@ package com.example.weatherforecastapp.data
 import com.example.weatherforecastapp.model.WeatherResponse
 import com.example.weatherforecastapp.model.ForecastResponse
 import com.example.weatherforecastapp.model.AirQualityResponse
-import com.example.weatherforecastapp.model.UvResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -32,11 +31,4 @@ interface WeatherApiService {
         @Query("lon") lon: Double,
         @Query("appid") apiKey: String
     ): AirQualityResponse
-
-    @GET("uvi")
-    suspend fun getUvIndex(
-        @Query("lat") lat: Double,
-        @Query("lon") lon: Double,
-        @Query("appid") apiKey: String
-    ): UvResponse
 }

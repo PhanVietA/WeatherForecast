@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.roundToInt
 
 class A3Fragment : Fragment(R.layout.fragment_a3) {
 
@@ -51,8 +52,8 @@ class A3Fragment : Fragment(R.layout.fragment_a3) {
                     // 1. Lắng nghe dữ liệu thời tiết hiện tại (Tên địa điểm, Max/Min Temp, Bình minh/Hoàng hôn)
                     state.currentWeather?.let { weather ->
                         val cityName = weather.name ?: "Unknown"
-                        val maxTemp = weather.main.tempMax.toInt()
-                        val minTemp = weather.main.tempMin.toInt()
+                        val maxTemp = (state.todayMaxTemp ?: weather.main.tempMax).roundToInt()
+                        val minTemp = (state.todayMinTemp ?: weather.main.tempMin).roundToInt()
 
                         // Cập nhật TextView Location & Temp theo strings.xml
                         binding.tvLocationAndTemp.text = getString(R.string.location_temp_format, cityName, maxTemp, minTemp)

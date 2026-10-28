@@ -20,6 +20,8 @@ data class WeatherUiState(
     val fullForecastList: List<ForecastItem> = emptyList(),
     val airQuality: Int? = null, // Thêm trường lưu AQI cho màn A3
     val uvIndex: Double? = null, // Thêm trường lưu UV Index cho màn A3
+    val todayMaxTemp: Double? = null, // Nhiệt độ cao nhất trong ngày
+    val todayMinTemp: Double? = null, // Nhiệt độ thấp nhất trong ngày
     val isLoading: Boolean = false,
     val error: String? = null
 )
@@ -59,20 +61,32 @@ class WeatherViewModel : ViewModel() {
                     Log.e("WeatherAPI", "Gọi Air Quality thất bại: ${e.message}")
                 }
 
-                // 4. Gọi UV Index API (Phục vụ card UV Index ở màn A3)
+                // 4. Gọi UV Index API từ Open-Meteo (Phục vụ card UV Index ở màn A3)
                 var uvValue: Double? = null
                 try {
-                    val uvResponse = repository.getUvIndex(lat, lon, apiKey)
-                    uvValue = uvResponse.value
+                    uvValue = repository.getUvIndex(lat, lon)
                     Log.d("WeatherAPI", "UV Index thành công: UV = $uvValue")
                 } catch (e: Exception) {
                     Log.e("WeatherAPI", "Gọi UV Index thất bại: ${e.message}")
                 }
 
+                // 5. Tính toán Nhiệt độ Max & Min chính xác trong ngày từ danh sách forecast
+                val dateKeyFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                val todayKey = dateKeyFormat.format(Date())
+                val todayItems = forecast.list.filter { item ->
+                    dateKeyFormat.format(Date(item.dt * 1000L)) == todayKey
+                }
+
+                val allTodayTemps = (todayItems.map { it.main.temp } +
+                        forecast.list.take(8).map { it.main.temp } +
+                        listOf(current.main.temp, current.main.tempMax, current.main.tempMin))
+
+                val calculatedMaxTemp = allTodayTemps.maxOrNull() ?: current.main.tempMax
+                val calculatedMinTemp = allTodayTemps.minOrNull() ?: current.main.tempMin
+
                 // Format danh sách thời tiết theo giờ cho RecyclerView
                 val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
                 val hourlyList = forecast.list.take(6).map { item ->
-                    // Đã sửa lỗi thiếu dấu * ở đây
                     val date = Date(item.dt * 1000L)
                     val time = sdf.format(date)
 
@@ -98,6 +112,8 @@ class WeatherViewModel : ViewModel() {
                     fullForecastList = forecast.list,
                     airQuality = aqiValue,
                     uvIndex = uvValue,
+                    todayMaxTemp = calculatedMaxTemp,
+                    todayMinTemp = calculatedMinTemp,
                     isLoading = false
                 )
 

@@ -32,6 +32,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.roundToInt
 
 class A2Fragment : Fragment() {
 
@@ -236,10 +237,12 @@ class A2Fragment : Fragment() {
 
                         binding.currentTemp.text = getString(R.string.temp_format, weather.main.temp)
                         binding.description.text = weather.weather.firstOrNull()?.description ?: "--"
+                        val maxTemp = (state.todayMaxTemp ?: weather.main.tempMax).roundToInt()
+                        val minTemp = (state.todayMinTemp ?: weather.main.tempMin).roundToInt()
                         binding.maxMin.text = getString(
                             R.string.max_min_format,
-                            weather.main.tempMax,
-                            weather.main.tempMin
+                            maxTemp.toDouble(),
+                            minTemp.toDouble()
                         )
 
                         val iconCode = weather.weather.firstOrNull()?.icon
