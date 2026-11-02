@@ -1,11 +1,13 @@
 package com.example.weatherforecastapp.repository
 
-import com.example.weatherforecastapp.model.ForecastResponse
+import com.example.weatherforecastapp.data.local.WeatherDao
+import com.example.weatherforecastapp.data.local.WeatherEntity
 import com.example.weatherforecastapp.model.AirQualityResponse
+import com.example.weatherforecastapp.model.ForecastResponse
 import com.example.weatherforecastapp.network.OpenMeteoClient
 import com.example.weatherforecastapp.network.RetrofitInstance
 
-class WeatherRepository {
+class WeatherRepository(private val weatherDao: WeatherDao? = null) {
 
     suspend fun getCurrentWeather(lat: Double, lon: Double, apiKey: String) =
         RetrofitInstance.api.getCurrentWeather(lat, lon, apiKey)
@@ -24,5 +26,13 @@ class WeatherRepository {
         } catch (_: Exception) {
             0.0
         }
+    }
+
+    suspend fun getCachedWeather(id: String = "current_location"): WeatherEntity? {
+        return weatherDao?.getWeatherById(id)
+    }
+
+    suspend fun saveWeatherToCache(entity: WeatherEntity) {
+        weatherDao?.insertWeather(entity)
     }
 }

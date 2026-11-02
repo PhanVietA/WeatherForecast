@@ -65,5 +65,10 @@ android {
         implementation(libs.glide)
         kapt(libs.glide.compiler)
         implementation("com.google.android.gms:play-services-location:21.0.1")
+
+        // Room Database
+        implementation(libs.androidx.room.runtime)
+        implementation(libs.androidx.room.ktx)
+        kapt(libs.androidx.room.compiler)
     }
 }

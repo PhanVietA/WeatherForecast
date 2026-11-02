@@ -1,12 +1,20 @@
 package com.example.weatherforecastapp.viewmodel
 
+import android.app.Application
 import android.util.Log
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.weatherforecastapp.WeatherApplication
+import com.example.weatherforecastapp.data.local.WeatherEntity
 import com.example.weatherforecastapp.model.ForecastItem
 import com.example.weatherforecastapp.model.HourlyWeather
+import com.example.weatherforecastapp.model.Main
+import com.example.weatherforecastapp.model.Sys
+import com.example.weatherforecastapp.model.Weather
 import com.example.weatherforecastapp.model.WeatherResponse
 import com.example.weatherforecastapp.repository.WeatherRepository
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -18,20 +26,41 @@ data class WeatherUiState(
     val currentWeather: WeatherResponse? = null,
     val hourlyForecast: List<HourlyWeather> = emptyList(),
     val fullForecastList: List<ForecastItem> = emptyList(),
-    val airQuality: Int? = null, // Thêm trường lưu AQI cho màn A3
-    val uvIndex: Double? = null, // Thêm trường lưu UV Index cho màn A3
-    val todayMaxTemp: Double? = null, // Nhiệt độ cao nhất trong ngày
-    val todayMinTemp: Double? = null, // Nhiệt độ thấp nhất trong ngày
+    val airQuality: Int? = null,
+    val uvIndex: Double? = null,
+    val todayMaxTemp: Double? = null,
+    val todayMinTemp: Double? = null,
     val isLoading: Boolean = false,
+    val isOfflineData: Boolean = false,
     val error: String? = null
 )
 
-class WeatherViewModel : ViewModel() {
+class WeatherViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository = WeatherRepository()
+    private val db = (application as? WeatherApplication)?.database
+    private val repository = WeatherRepository(db?.weatherDao())
+    private val gson = Gson()
 
     private val _uiState = MutableStateFlow(WeatherUiState())
     val uiState: StateFlow<WeatherUiState> = _uiState
+
+    init {
+        loadCachedWeather()
+    }
+
+    private fun loadCachedWeather() {
+        viewModelScope.launch {
+            try {
+                val cached = repository.getCachedWeather()
+                if (cached != null) {
+                    Log.d("WeatherAPI", "Đã tìm thấy dữ liệu cache trong Room DB")
+                    applyEntityToUiState(cached, isOffline = true)
+                }
+            } catch (e: Exception) {
+                Log.e("WeatherAPI", "Lỗi đọc dữ liệu cache từ Room: ${e.message}")
+            }
+        }
+    }
 
     fun loadWeather(lat: Double, lon: Double, apiKey: String) {
         viewModelScope.launch {
@@ -51,7 +80,7 @@ class WeatherViewModel : ViewModel() {
                 val forecast = repository.getHourlyForecast(lat, lon, apiKey)
                 Log.d("WeatherAPI", "Forecast thành công: số lượng ${forecast.list.size}")
 
-                // 3. Gọi Air Quality API (Phục vụ card Air Quality ở màn A3)
+                // 3. Gọi Air Quality API
                 var aqiValue: Int? = null
                 try {
                     val airQualityResponse = repository.getAirQuality(lat, lon, apiKey)
@@ -61,7 +90,7 @@ class WeatherViewModel : ViewModel() {
                     Log.e("WeatherAPI", "Gọi Air Quality thất bại: ${e.message}")
                 }
 
-                // 4. Gọi UV Index API từ Open-Meteo (Phục vụ card UV Index ở màn A3)
+                // 4. Gọi UV Index API từ Open-Meteo
                 var uvValue: Double? = null
                 try {
                     uvValue = repository.getUvIndex(lat, lon)
@@ -70,7 +99,7 @@ class WeatherViewModel : ViewModel() {
                     Log.e("WeatherAPI", "Gọi UV Index thất bại: ${e.message}")
                 }
 
-                // 5. Tính toán Nhiệt độ Max & Min chính xác trong ngày từ danh sách forecast
+                // 5. Tính toán Nhiệt độ Max & Min chính xác trong ngày
                 val dateKeyFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                 val todayKey = dateKeyFormat.format(Date())
                 val todayItems = forecast.list.filter { item ->
@@ -89,12 +118,7 @@ class WeatherViewModel : ViewModel() {
                 val hourlyList = forecast.list.take(6).map { item ->
                     val date = Date(item.dt * 1000L)
                     val time = sdf.format(date)
-
-                    val iconCode = item.weather
-                        .firstOrNull()
-                        ?.icon
-                        ?: "01d"
-
+                    val iconCode = item.weather.firstOrNull()?.icon ?: "01d"
                     val iconUrl = "https://openweathermap.org/img/wn/${iconCode}@2x.png"
                     val temp = item.main.temp.toInt()
 
@@ -105,7 +129,7 @@ class WeatherViewModel : ViewModel() {
                     )
                 }
 
-                // Cập nhật toàn bộ State
+                // Cập nhật State
                 _uiState.value = WeatherUiState(
                     currentWeather = current,
                     hourlyForecast = hourlyList,
@@ -114,19 +138,87 @@ class WeatherViewModel : ViewModel() {
                     uvIndex = uvValue,
                     todayMaxTemp = calculatedMaxTemp,
                     todayMinTemp = calculatedMinTemp,
-                    isLoading = false
+                    isLoading = false,
+                    isOfflineData = false
                 )
 
-                Log.d("WeatherAPI", "Đã cập nhật dữ liệu lên UI thành công")
+                // 6. Lưu dữ liệu mới vào Room DB
+                val entity = WeatherEntity(
+                    id = "current_location",
+                    cityName = current.name ?: "Unknown",
+                    temp = current.main.temp,
+                    tempMin = calculatedMinTemp,
+                    tempMax = calculatedMaxTemp,
+                    description = current.weather.firstOrNull()?.description ?: "",
+                    iconCode = current.weather.firstOrNull()?.icon ?: "01d",
+                    sunrise = current.sys?.sunrise ?: 0L,
+                    sunset = current.sys?.sunset ?: 0L,
+                    airQuality = aqiValue,
+                    uvIndex = uvValue,
+                    hourlyForecastJson = gson.toJson(hourlyList),
+                    fullForecastJson = gson.toJson(forecast.list),
+                    updatedAt = System.currentTimeMillis()
+                )
+                repository.saveWeatherToCache(entity)
+                Log.d("WeatherAPI", "Đã lưu dữ liệu mới vào Room DB thành công")
 
             } catch (e: Exception) {
                 Log.e("WeatherAPI", "Gọi API thất bại: ${e.message}", e)
 
-                _uiState.value = _uiState.value.copy(
-                    isLoading = false,
-                    error = e.message ?: "Lỗi khi tải dữ liệu thời tiết"
-                )
+                // Nếu đã có dữ liệu cache trên UI, giữ nguyên và chỉ báo lỗi mạng
+                val currentCache = repository.getCachedWeather()
+                if (currentCache != null) {
+                    applyEntityToUiState(currentCache, isOffline = true)
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = "Không có kết nối mạng. Đang hiển thị dữ liệu offline."
+                    )
+                } else {
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = e.message ?: "Lỗi khi tải dữ liệu thời tiết"
+                    )
+                }
             }
         }
+    }
+
+    private fun applyEntityToUiState(entity: WeatherEntity, isOffline: Boolean) {
+        val weatherResponse = WeatherResponse(
+            name = entity.cityName,
+            sys = Sys(sunrise = entity.sunrise, sunset = entity.sunset),
+            weather = listOf(Weather(description = entity.description, icon = entity.iconCode)),
+            main = Main(
+                temp = entity.temp,
+                tempMin = entity.tempMin,
+                tempMax = entity.tempMax
+            )
+        )
+
+        val hourlyListType = object : TypeToken<List<HourlyWeather>>() {}.type
+        val hourlyList: List<HourlyWeather> = try {
+            gson.fromJson(entity.hourlyForecastJson, hourlyListType) ?: emptyList()
+        } catch (_: Exception) {
+            emptyList()
+        }
+
+        val fullForecastType = object : TypeToken<List<ForecastItem>>() {}.type
+        val fullList: List<ForecastItem> = try {
+            gson.fromJson(entity.fullForecastJson, fullForecastType) ?: emptyList()
+        } catch (_: Exception) {
+            emptyList()
+        }
+
+        _uiState.value = WeatherUiState(
+            currentWeather = weatherResponse,
+            hourlyForecast = hourlyList,
+            fullForecastList = fullList,
+            airQuality = entity.airQuality,
+            uvIndex = entity.uvIndex,
+            todayMaxTemp = entity.tempMax,
+            todayMinTemp = entity.tempMin,
+            isLoading = false,
+            isOfflineData = isOffline
+        )
     }
 }
