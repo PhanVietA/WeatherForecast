@@ -7,7 +7,9 @@ import com.example.weatherforecastapp.model.ForecastResponse
 import com.example.weatherforecastapp.network.OpenMeteoClient
 import com.example.weatherforecastapp.network.RetrofitInstance
 
-class WeatherRepository(private val weatherDao: WeatherDao? = null) {
+class WeatherRepository(
+    private val weatherDao: WeatherDao? = null
+) {
 
     suspend fun getCurrentWeather(lat: Double, lon: Double, apiKey: String) =
         RetrofitInstance.api.getCurrentWeather(lat, lon, apiKey)

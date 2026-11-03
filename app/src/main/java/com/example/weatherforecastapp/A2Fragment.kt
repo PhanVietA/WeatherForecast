@@ -139,18 +139,8 @@ class A2Fragment : Fragment() {
             return
         }
 
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location: Location? ->
-                if (location != null) {
-                    Log.d("WeatherLocation", "Lấy lastLocation thành công: Lat=${location.latitude}, Lon=${location.longitude}")
-                    viewModel.loadWeather(location.latitude, location.longitude, apiKey)
-                } else {
-                    requestFreshLocation()
-                }
-            }
-            .addOnFailureListener {
-                requestFreshLocation()
-            }
+        // Gọi tươi vị trí mới nhất (getCurrentLocation) để tránh bị lấy lại tọa độ cũ (Mỹ) trong lastLocation của máy ảo
+        requestFreshLocation()
     }
 
     @SuppressLint("MissingPermission")
