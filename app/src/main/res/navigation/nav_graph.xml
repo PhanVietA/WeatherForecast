@@ -12,31 +12,31 @@
         tools:layout="@layout/splash_fragment_a1">
 
         <action
-            android:id="@+id/action_splashFragment_to_a2Fragment"
-            app:destination="@id/a2Fragment" />
+            android:id="@+id/action_splashFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
 
     </fragment>
 
     <fragment
-        android:id="@+id/a2Fragment"
-        android:name="com.example.weatherforecastapp.A2Fragment"
-        android:label="A2Fragment"
-        tools:layout="@layout/fragment_a2">
+        android:id="@+id/homeFragment"
+        android:name="com.example.weatherforecastapp.HomeFragment"
+        android:label="HomeFragment"
+        tools:layout="@layout/fragment_home">
 
         <action
-            android:id="@+id/action_a2Fragment_to_splashFragment"
+            android:id="@+id/action_homeFragment_to_splashFragment"
             app:destination="@id/splashFragment"
             app:popUpTo="@id/splashFragment"
             app:popUpToInclusive="true" />
 
         <action
-            android:id="@+id/action_a2Fragment_to_a3Fragment"
-            app:destination="@id/a3Fragment" />
+            android:id="@+id/action_homeFragment_to_weatherDetailFragment"
+            app:destination="@id/weatherDetailFragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/a3Fragment"
-        android:name="com.example.weatherforecastapp.A3Fragment"
-        android:label="A3Fragment"
-        tools:layout="@layout/fragment_a3" />
+        android:id="@+id/weatherDetailFragment"
+        android:name="com.example.weatherforecastapp.WeatherDetailFragment"
+        android:label="WeatherDetailFragment"
+        tools:layout="@layout/fragment_weather_detail" />
 </navigation>

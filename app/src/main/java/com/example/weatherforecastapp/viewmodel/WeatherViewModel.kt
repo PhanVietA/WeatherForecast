@@ -22,6 +22,9 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
+/**
+ * Data class WeatherUiState đóng gói toàn bộ trạng thái dữ liệu hiển thị trên giao diện (UI State).
+ */
 data class WeatherUiState(
     val currentWeather: WeatherResponse? = null,
     val hourlyForecast: List<HourlyWeather> = emptyList(),
@@ -35,19 +38,29 @@ data class WeatherUiState(
     val error: String? = null
 )
 
+/**
+ * WeatherViewModel quản lý logic nghiệp vụ và trạng thái UI cho các Fragment.
+ * Kế thừa AndroidViewModel để truy cập Application Context và khởi tạo Room DB.
+ */
 class WeatherViewModel(application: Application) : AndroidViewModel(application) {
 
+    // Khởi tạo Database và Repository
     private val db = (application as? WeatherApplication)?.database
     private val repository = WeatherRepository(db?.weatherDao())
     private val gson = Gson()
 
+    // Luồng dữ liệu trạng thái UIState dạng MutableStateFlow
     private val _uiState = MutableStateFlow(WeatherUiState())
     val uiState: StateFlow<WeatherUiState> = _uiState
 
     init {
+        // Tải dữ liệu cache từ CSDL Room ngay khi ViewModel được tạo
         loadCachedWeather()
     }
 
+    /**
+     * Đọc dữ liệu cục bộ từ Room CSDL hiển thị lập tức lên UI (Cơ chế Offline-First)
+     */
     private fun loadCachedWeather() {
         viewModelScope.launch {
             try {
@@ -62,25 +75,28 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+    /**
+     * Gọi các REST API thời tiết trực tuyến theo tọa độ GPS (Lat, Lon)
+     */
     fun loadWeather(lat: Double, lon: Double, apiKey: String) {
         viewModelScope.launch {
             try {
-                Log.d("WeatherAPI", "Bắt đầu gọi API thời tiết")
+                Log.d("WeatherAPI", "Bắt đầu gọi API thời tiết - Tọa độ GPS: Lat=$lat, Lon=$lon")
 
                 _uiState.value = _uiState.value.copy(
                     isLoading = true,
                     error = null
                 )
 
-                // 1. Gọi Current Weather API
+                // 1. Gọi Current Weather API (OpenWeatherMap)
                 val current = repository.getCurrentWeather(lat, lon, apiKey)
                 Log.d("WeatherAPI", "Current Weather thành công: ${current.main.temp}")
 
-                // 2. Gọi Forecast API
+                // 2. Gọi Forecast API (OpenWeatherMap)
                 val forecast = repository.getHourlyForecast(lat, lon, apiKey)
                 Log.d("WeatherAPI", "Forecast thành công: số lượng ${forecast.list.size}")
 
-                // 3. Gọi Air Quality API
+                // 3. Gọi Air Quality API (AQI từ OpenWeatherMap)
                 var aqiValue: Int? = null
                 try {
                     val airQualityResponse = repository.getAirQuality(lat, lon, apiKey)
@@ -90,7 +106,7 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
                     Log.e("WeatherAPI", "Gọi Air Quality thất bại: ${e.message}")
                 }
 
-                // 4. Gọi UV Index API từ Open-Meteo
+                // 4. Gọi UV Index API (từ Open-Meteo API)
                 var uvValue: Double? = null
                 try {
                     uvValue = repository.getUvIndex(lat, lon)
@@ -113,7 +129,7 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
                 val calculatedMaxTemp = allTodayTemps.maxOrNull() ?: current.main.tempMax
                 val calculatedMinTemp = allTodayTemps.minOrNull() ?: current.main.tempMin
 
-                // Format danh sách thời tiết theo giờ cho RecyclerView
+                // Định dạng danh sách thời tiết theo giờ cho RecyclerView
                 val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
                 val hourlyList = forecast.list.take(6).map { item ->
                     val date = Date(item.dt * 1000L)
@@ -129,7 +145,7 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
                     )
                 }
 
-                // Cập nhật State
+                // Cập nhật State lên giao diện UI
                 _uiState.value = WeatherUiState(
                     currentWeather = current,
                     hourlyForecast = hourlyList,
@@ -142,7 +158,7 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
                     isOfflineData = false
                 )
 
-                // 6. Lưu dữ liệu mới vào Room DB
+                // 6. Lưu/ghi đè dữ liệu thời tiết mới thu thập vào Room CSDL SQLite
                 val entity = WeatherEntity(
                     id = "current_location",
                     cityName = current.name ?: "Unknown",
@@ -165,7 +181,7 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
             } catch (e: Exception) {
                 Log.e("WeatherAPI", "Gọi API thất bại: ${e.message}", e)
 
-                // Nếu đã có dữ liệu cache trên UI, giữ nguyên và chỉ báo lỗi mạng
+                // Nếu ngắt mạng, tự động khôi phục dữ liệu từ Room CSDL hiển thị trên UI
                 val currentCache = repository.getCachedWeather()
                 if (currentCache != null) {
                     applyEntityToUiState(currentCache, isOffline = true)
@@ -183,6 +199,9 @@ class WeatherViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+    /**
+     * Chuyển đổi dữ liệu từ WeatherEntity (Room CSDL) sang WeatherUiState để cập nhật giao diện
+     */
     private fun applyEntityToUiState(entity: WeatherEntity, isOffline: Boolean) {
         val weatherResponse = WeatherResponse(
             name = entity.cityName,

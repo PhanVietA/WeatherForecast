@@ -26,7 +26,7 @@ class SplashFragment : Fragment() {
 
         val btnGetStarted = view.findViewById<View>(R.id.btnGetStarted)
         btnGetStarted.setOnClickListener {
-            findNavController().navigate(R.id.action_splashFragment_to_a2Fragment)
+            findNavController().navigate(R.id.action_splashFragment_to_homeFragment)
         }
     }
 
