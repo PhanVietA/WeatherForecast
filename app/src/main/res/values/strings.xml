@@ -4,7 +4,6 @@
     <string name="first_title">Weather</string>
     <string name="second_title">ForeCasts</string>
     <string name="btn_get_start">Get Start</string>
-    <string name="description">Precipitations</string>
     <string name="max_min">Max: 24°\u00A0\u00A0\u00A0Min: 18°</string>
     <string name="temperature">19°</string>
     <string name="today">Today</string>
@@ -54,4 +53,5 @@
     <string name="uv_high">High</string>
     <string name="uv_very_high">Very High</string>
     <string name="uv_extreme">Extreme</string>
+    <string name="weather_description">Scattered clouds</string>
 </resources>

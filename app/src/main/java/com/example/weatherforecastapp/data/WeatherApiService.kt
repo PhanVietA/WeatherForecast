@@ -18,7 +18,7 @@ interface WeatherApiService {
         @Query("lon") lon: Double,
         @Query("appid") apiKey: String,
         @Query("units") units: String = "metric", // Đơn vị nhiệt độ Celsius
-        @Query("lang") lang: String = "vi"
+        @Query("lang") lang: String = "en"
     ): WeatherResponse
 
     // Lấy thông tin danh sách dự báo thời tiết 5 ngày / 3 giờ một lần
@@ -28,7 +28,7 @@ interface WeatherApiService {
         @Query("lon") lon: Double,
         @Query("appid") apiKey: String,
         @Query("units") units: String = "metric",
-        @Query("lang") lang: String = "vi"
+        @Query("lang") lang: String = "en"
     ): ForecastResponse
 
     // Lấy chỉ số chất lượng không khí ô nhiễm AQI

@@ -80,7 +80,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text=""
-                        tools:text="Mây rải rác"
+                        tools:text="@string/weather_description"
                         android:textColor="@color/white"
                         android:fontFamily="@font/poppins_regular"
                         android:textSize="24sp"
@@ -179,7 +179,9 @@
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/todayText" />
+                        app:layout_constraintTop_toBottomOf="@id/todayText"
+                        tools:listitem="@layout/item_hourly_weather"
+                        tools:itemCount="8" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
 
