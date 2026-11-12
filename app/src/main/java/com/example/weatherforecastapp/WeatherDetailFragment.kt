@@ -72,7 +72,7 @@ class WeatherDetailFragment : Fragment(R.layout.fragment_weather_detail) {
                     // 2. Gom nhóm dữ liệu dự báo theo Ngày (thay vì hiển thị theo mốc 3 giờ)
                     if (state.fullForecastList.isNotEmpty()) {
                         val dateKeyFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                        val dayDisplayFormat = SimpleDateFormat("EEE", Locale.forLanguageTag("vi-VN"))
+                        val dayDisplayFormat = SimpleDateFormat("EEE", Locale.ENGLISH)
                         val todayKey = dateKeyFormat.format(Date())
 
                         val dailyList = state.fullForecastList
@@ -87,7 +87,7 @@ class WeatherDetailFragment : Fragment(R.layout.fragment_weather_detail) {
                                 } ?: itemsForDay.first()
 
                                 val dayLabel = if (dateKey == todayKey) {
-                                    "Hôm nay"
+                                    "Today"
                                 } else {
                                     dayDisplayFormat.format(Date(representativeItem.dt * 1000L))
                                         .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }

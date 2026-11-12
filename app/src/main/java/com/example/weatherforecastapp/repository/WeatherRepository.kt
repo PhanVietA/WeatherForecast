@@ -4,8 +4,8 @@ import com.example.weatherforecastapp.data.local.WeatherDao
 import com.example.weatherforecastapp.data.local.WeatherEntity
 import com.example.weatherforecastapp.model.AirQualityResponse
 import com.example.weatherforecastapp.model.ForecastResponse
-import com.example.weatherforecastapp.network.OpenMeteoClient
-import com.example.weatherforecastapp.network.RetrofitInstance
+import com.example.weatherforecastapp.data.remote.OpenMeteoClient
+import com.example.weatherforecastapp.data.remote.RetrofitInstance
 
 /**
  * Lớp WeatherRepository chịu trách nhiệm điều phối luồng dữ liệu (Data Layer).
