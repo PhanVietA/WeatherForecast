@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -45,6 +46,11 @@ class HomeFragment : Fragment() {
     private lateinit var hourlyAdapter: HourlyWeatherAdapter
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
+    private lateinit var connectivityManager: ConnectivityManager
+    private lateinit var networkCallback: ConnectivityManager.NetworkCallback
+    private var isNetworkRegistered = false
+    private var wasOfflineBefore = false
+
     private val locationPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestMultiplePermissions()
@@ -81,6 +87,7 @@ class HomeFragment : Fragment() {
         setupRecyclerView()
         observeWeatherState()
         setupClickListeners()
+        setupNetworkCallback()
 
         checkPermissionAndLoadLocation()
     }
@@ -139,7 +146,7 @@ class HomeFragment : Fragment() {
             return
         }
 
-        // Gọi tươi vị trí mới nhất (getCurrentLocation) để tránh bị lấy lại tọa độ cũ (Mỹ) trong lastLocation của máy ảo
+        // Gọi vị trí mới nhất (getCurrentLocation) để tránh bị lấy lại tọa độ cũ trong lastLocation của máy ảo
         requestFreshLocation()
     }
 
@@ -247,8 +254,41 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun setupNetworkCallback() {
+        try {
+            connectivityManager = requireContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            networkCallback = object : ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: android.net.Network) {
+                    super.onAvailable(network)
+                    activity?.runOnUiThread {
+                        if (viewModel.uiState.value.isOfflineData || wasOfflineBefore) {
+                            Toast.makeText(requireContext(), "Internet connected. Auto-syncing weather data...", Toast.LENGTH_SHORT).show()
+                            wasOfflineBefore = false
+                            checkPermissionAndLoadLocation()
+                        }
+                    }
+                }
+
+                override fun onLost(network: android.net.Network) {
+                    super.onLost(network)
+                    wasOfflineBefore = true
+                }
+            }
+            val networkRequest = android.net.NetworkRequest.Builder()
+                .addCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                .build()
+            connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
+            isNetworkRegistered = true
+        } catch (_: Exception) {}
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
+        if (isNetworkRegistered) {
+            try {
+                connectivityManager.unregisterNetworkCallback(networkCallback)
+            } catch (_: Exception) {}
+        }
         _binding = null
     }
 }
