@@ -11,79 +11,128 @@
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScroll"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:fillViewport="true"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/ivMenuBottom"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Main Content -->
+        <!-- Main Content Container -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="16dp">
 
-            <!-- Location + Temp -->
+            <!-- City Name -->
             <TextView
-                android:id="@+id/tvLocationAndTemp"
+                android:id="@+id/tvCityName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text=""
-                tools:text="Hanoi\nMax: 28° Min: 18°"
+                tools:text="North America"
                 android:textColor="@android:color/white"
                 android:gravity="center"
                 android:textSize="24sp"
-                android:textAlignment="center"
-                android:fontFamily="@font/poppins_regular"
-                android:lineSpacingExtra="4dp"
-                android:layout_marginTop="35dp"
+                android:fontFamily="@font/poppins_medium"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-            <!-- 7 Days Forecast Title -->
+            <!-- Max / Min Temp -->
+            <TextView
+                android:id="@+id/tvMaxMinTemp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:text="Max: 24°   Min: 18°"
+                android:textColor="#E0E0E0"
+                android:gravity="center"
+                android:textSize="15sp"
+                android:fontFamily="@font/poppins_regular"
+                android:layout_marginTop="4dp"
+                app:layout_constraintTop_toBottomOf="@id/tvCityName"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <!-- 7-Days Forecasts Title -->
             <TextView
                 android:id="@+id/tv7DaysTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/days_title"
                 android:textColor="@android:color/white"
-                android:textSize="24sp"
+                android:textSize="20sp"
                 android:fontFamily="@font/opensans_semibold"
-                android:layout_marginTop="135dp"
-                android:layout_marginStart="20dp"
-                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="28dp"
+                app:layout_constraintTop_toBottomOf="@id/tvMaxMinTemp"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <!-- RecyclerView Forecast -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvForecast"
+            <!-- Forecast List Container with Flanking Arrows -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layoutForecastList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:orientation="horizontal"
+                android:layout_marginTop="12dp"
                 app:layout_constraintTop_toBottomOf="@id/tv7DaysTitle"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/item_forecast" />
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <!-- Left Arrow -->
+                <ImageView
+                    android:id="@+id/btnLeftArrow"
+                    android:layout_width="20dp"
+                    android:layout_height="24dp"
+                    android:scaleX="-1"
+                    android:src="@drawable/ic_chevron_left"
+                    android:contentDescription="@string/see_more"
+                    app:tint="@android:color/white"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <!-- RecyclerView Forecast -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvForecast"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/btnLeftArrow"
+                    app:layout_constraintEnd_toStartOf="@+id/btnRightArrow"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_forecast" />
+
+                <!-- Right Arrow -->
+                <ImageView
+                    android:id="@+id/btnRightArrow"
+                    android:layout_width="20dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_chevron_left"
+                    android:contentDescription="@string/see_more"
+                    app:tint="@android:color/white"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <!-- Air Quality Card -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardAirQuality"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                app:cardCornerRadius="24dp"
+                android:layout_marginTop="20dp"
+                app:cardCornerRadius="20dp"
                 app:cardElevation="0dp"
-                app:layout_constraintTop_toBottomOf="@id/rvForecast"
+                app:cardBackgroundColor="@android:color/transparent"
+                app:layout_constraintTop_toBottomOf="@id/layoutForecastList"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
-                <!-- Content on the card -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -99,8 +148,8 @@
 
                         <ImageView
                             android:id="@+id/icAirQuality"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
                             android:layout_marginEnd="8dp"
                             android:src="@drawable/ic_crosshairs"
                             app:tint="@android:color/white" />
@@ -110,9 +159,9 @@
                             android:text="@string/air_quality"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textColor="@android:color/white"
-                            android:textSize="16sp"
-                            android:fontFamily="@font/opensans_regular"/>
+                            android:textColor="#D8D8D8"
+                            android:textSize="13sp"
+                            android:fontFamily="@font/opensans_semibold"/>
                     </LinearLayout>
 
                     <!-- Air Quality Value -->
@@ -120,36 +169,35 @@
                         android:id="@+id/tvAirQualityDetails"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text=""
-                        tools:text="@string/aqi_level_1"
+                        android:layout_marginTop="6dp"
+                        tools:text="3-Low Health Risk"
                         android:textColor="@android:color/white"
-                        android:textSize="28sp"
-                        android:fontFamily="@font/opensans_semibold"/>
+                        android:textSize="22sp"
+                        android:fontFamily="@font/poppins_medium"/>
 
-                    <!-- Line -->
+                    <!-- Gradient Line -->
                     <View
                         android:id="@+id/viewDivider"
                         android:layout_width="match_parent"
-                        android:layout_height="5dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_height="4dp"
+                        android:layout_marginTop="10dp"
                         android:background="@drawable/line_gradient" />
 
-                    <!-- See more -->
+                    <!-- See More -->
                     <TextView
                         android:id="@+id/tvSeeMore"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="10dp"
                         android:text="@string/see_more"
                         android:fontFamily="@font/opensans_semibold"
                         android:textColor="@android:color/white"
-                        android:textSize="18sp"
+                        android:textSize="15sp"
                         app:drawableEndCompat="@drawable/ic_chevron_left" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- Bottom Cards: Sunrise & UV -->
+            <!-- Bottom Cards: Sunrise & UV Index Side-by-Side -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/groupBottomCards"
                 android:layout_width="0dp"
@@ -157,16 +205,16 @@
                 android:layout_marginTop="16dp"
                 app:layout_constraintTop_toBottomOf="@id/cardAirQuality"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_chainStyle="spread_inside">
+                app:layout_constraintEnd_toEndOf="parent">
 
-                <!-- Sunrise -->
+                <!-- Sunrise Card -->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardSunrise"
                     android:layout_width="0dp"
-                    android:layout_height="150dp"
+                    android:layout_height="140dp"
                     android:layout_marginEnd="8dp"
-                    app:cardCornerRadius="16dp"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp"
                     app:cardBackgroundColor="@android:color/transparent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/cardUv"
@@ -178,92 +226,134 @@
                         android:layout_height="match_parent"
                         android:background="@drawable/bg_blue_card"
                         android:gravity="center"
+                        android:padding="12dp"
                         android:orientation="vertical">
 
-                        <TextView
-                            android:text="@string/sunrise_title"
-                            android:layout_height="wrap_content"
+                        <LinearLayout
                             android:layout_width="wrap_content"
-                            android:textColor="@android:color/white"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_marginEnd="6dp"
+                                android:src="@mipmap/ic_sun"
+                                android:contentDescription="@string/ic_sun" />
+
+                            <TextView
+                                android:text="@string/sunrise_title"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:textColor="#D8D8D8"
+                                android:textSize="13sp"
+                                android:fontFamily="@font/opensans_semibold" />
+                        </LinearLayout>
 
                         <TextView
                             android:id="@+id/tvSunriseTime"
-                            android:layout_marginTop="4dp"
+                            android:layout_marginTop="8dp"
                             android:layout_height="wrap_content"
                             android:layout_width="wrap_content"
-                            android:text=""
-                            tools:text="Sunrise: 5:28 AM"
+                            tools:text="5:28 AM"
                             android:textColor="@android:color/white"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
+                            android:textSize="22sp"
+                            android:fontFamily="@font/poppins_medium" />
 
                         <TextView
                             android:id="@+id/tvSunsetTime"
                             android:layout_height="wrap_content"
                             android:layout_width="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:text=""
-                            tools:text="Sunset: 7:25 PM"
-                            android:textColor="@android:color/white"
-                            android:textSize="14sp"
-                            android:textStyle="bold"/>
+                            tools:text="Sunset: 7.25PM"
+                            android:textColor="#D8D8D8"
+                            android:textSize="13sp"
+                            android:fontFamily="@font/poppins_regular"/>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
-                <!-- UV Index -->
+                <!-- UV Index Card -->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardUv"
                     android:layout_width="0dp"
-                    android:layout_height="150dp"
-                    app:cardCornerRadius="16dp"
+                    android:layout_height="140dp"
+                    android:layout_marginStart="8dp"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp"
                     app:cardBackgroundColor="@android:color/transparent"
                     app:layout_constraintStart_toEndOf="@id/cardSunrise"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent">
+
                     <LinearLayout
                         android:orientation="vertical"
                         android:gravity="center"
+                        android:padding="12dp"
                         android:background="@drawable/bg_blue_card"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <TextView
-                            android:text="@string/uv_title"
-                            android:layout_height="wrap_content"
+                        <LinearLayout
                             android:layout_width="wrap_content"
-                            android:textColor="@android:color/white"
-                            android:textStyle="bold"
-                            android:textSize="14sp" />
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_marginEnd="6dp"
+                                android:src="@mipmap/ic_sun"
+                                android:contentDescription="@string/ic_sun" />
+
+                            <TextView
+                                android:text="@string/uv_title"
+                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:textColor="#D8D8D8"
+                                android:textSize="13sp"
+                                android:fontFamily="@font/opensans_semibold" />
+                        </LinearLayout>
 
                         <TextView
                             android:id="@+id/tvUvValue"
                             android:layout_height="wrap_content"
                             android:layout_width="wrap_content"
-                            android:text=""
                             tools:text="4"
                             android:textColor="@android:color/white"
                             android:textSize="24sp"
-                            android:textStyle="bold"
+                            android:fontFamily="@font/poppins_medium"
                             android:layout_marginTop="4dp" />
 
                         <TextView
                             android:id="@+id/tvUvLevel"
                             android:layout_height="wrap_content"
                             android:layout_width="wrap_content"
-                            android:text=""
                             tools:text="Moderate"
-                            android:textColor="@android:color/white"
-                            android:textSize="16sp"
-                            android:layout_marginTop="4dp" />
+                            android:textColor="#D8D8D8"
+                            android:textSize="15sp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:layout_marginTop="2dp" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </androidx.core.widget.NestedScrollView>
+
+    <!-- Bottom Menu Navigation Icon -->
+    <ImageView
+        android:id="@+id/ivMenuBottom"
+        android:layout_width="26dp"
+        android:layout_height="18dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/ic_menu"
+        android:contentDescription="@string/icon_menu_desc"
+        app:tint="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -56,7 +56,7 @@ class WeatherDetailFragment : Fragment(R.layout.fragment_weather_detail) {
                         val minTemp = (state.todayMinTemp ?: weather.main.tempMin).roundToInt()
 
                         // Cập nhật TextView Location & Temp theo strings.xml
-                        binding.tvLocationAndTemp.text = getString(R.string.location_temp_format, cityName, maxTemp, minTemp)
+                        binding.tvCityName.text = getString(R.string.location_temp_format, cityName, maxTemp, minTemp)
 
                         weather.sys?.let { sys ->
                             // Định dạng giờ Bình minh & Hoàng hôn từ Unix timestamp

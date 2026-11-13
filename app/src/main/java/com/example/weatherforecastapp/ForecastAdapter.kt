@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.weatherforecastapp.model.DailyForecast
 
 /**
@@ -20,27 +21,32 @@ class ForecastAdapter(
         val imgWeatherIcon: ImageView = itemView.findViewById(R.id.imgWeatherIcon)
         val tvHour: TextView = itemView.findViewById(R.id.tvHour)
         val tvTemp: TextView = itemView.findViewById(R.id.tvTemp)
+
+        fun bind(item: DailyForecast) {
+            tvHour.text = item.time
+            tvTemp.text = item.temperature
+            if (!item.iconUrl.isNullOrEmpty()) {
+                Glide.with(itemView.context)
+                    .load(item.iconUrl)
+                    .into(imgWeatherIcon)
+            } else {
+                imgWeatherIcon.setImageResource(item.iconResId)
+            }
+        }
     }
 
-    // Khởi tạo layout item cho danh sách dự báo ngày
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ForecastViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_forecast, parent, false)
         return ForecastViewHolder(view)
     }
 
-    // Liên kết dữ liệu DailyForecast lên ViewHolder
     override fun onBindViewHolder(holder: ForecastViewHolder, position: Int) {
-        val item = items[position]
-        holder.imgWeatherIcon.setImageResource(item.iconResId)
-        holder.tvHour.text = item.time
-        holder.tvTemp.text = item.temperature
+        holder.bind(items[position])
     }
 
-    // Trả về số lượng phần tử
     override fun getItemCount(): Int = items.size
 
-    // Cập nhật danh sách mới và làm mới RecyclerView
     fun updateData(newItems: List<DailyForecast>) {
         this.items = newItems
         notifyDataSetChanged()
